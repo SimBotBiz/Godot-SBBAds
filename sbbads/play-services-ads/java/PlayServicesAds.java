@@ -103,6 +103,8 @@ public class PlayServicesAds extends Godot.SingletonBase {
             adBuilder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
             adBuilder.addTestDevice(getDeviceId());
         }
+
+        return adBuilder.Build();
     }
 
     private String getDeviceId() {
