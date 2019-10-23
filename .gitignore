@@ -1,0 +1,7 @@
+.vscode
+*.code-workspace
+.flake8
+Pipfile
+Pipfile.lock
+example/.import
+
