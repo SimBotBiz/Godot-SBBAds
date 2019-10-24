@@ -1,13 +1,24 @@
-extends Control
+extends Node
 
-# Declare member variables here. Examples:
-# var a: int = 2
-# var b: String = "text"
+var sbbtest = null
+var options: Dictionary = {
+	"OPTION_1": true,
+	"OPTION_2": "true",
+	"OPTION_3": 123456,
+	"OPTION_4": "Hello Godot!",
+}
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	if Engine.has_singleton("SBBTest"):
+		sbbtest = Engine.get_singleton("SBBTest")
+		sbbtest.init(get_instance_id(), options)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-#	pass
+# print log ingame
+func print_app(p_text: String) -> void:
+	$Log.newline()
+	$Log.add_text(p_text)
+
+# this is a callback function from android
+func _get_message(p_message: String):
+	print(p_message)
+	print_app(p_message)
