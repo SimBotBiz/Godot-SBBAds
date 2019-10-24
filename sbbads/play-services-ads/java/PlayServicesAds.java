@@ -290,9 +290,17 @@ public class PlayServicesAds extends Godot.SingletonBase {
 
 
     /* Activity States */
-    protected void onMainPause() {}
-    protected void onMainResume() {}
-    protected void onMainDestroy() {}
+    protected void onMainPause() {
+        SBBUtils.log(instanceId, "PlayServiceAds", "onMainPause");
+    }
+
+    protected void onMainResume() {
+        SBBUtils.log(instanceId, "PlayServiceAds", "onMainResume");
+    }
+
+    protected void onMainDestroy() {
+        SBBUtils.log(instanceId, "PlayServiceAds", "onMainDestroy");
+    }
 
 
     /* PRIVATE METHODS 
