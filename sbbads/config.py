@@ -15,8 +15,7 @@ def configure(env):
         # play-service-ads
         if artifacts['play-services-ads']:
             env.android_add_dependency(
-                "implementation ('com.google.android.gms:play-services-ads:17.0.0') \
-                    { exclude group: 'com.android.support', module: 'support-v4' }"
+                "implementation 'com.google.android.gms:play-services-ads:18.2.0'"
             )
             env.android_add_res_dir("play-services-ads/res")
             env.android_add_java_dir("play-services-ads/java")
@@ -26,6 +25,6 @@ def configure(env):
         # consent-library
         if artifacts['consent-library']:
             env.android_add_dependency(
-                "implementation ('com.google.android.ads.consent:consent-library:1.0.0')"
+                "implementation 'com.google.android.ads.consent:consent-library:1.0.7'"
             )
             env.android_add_java_dir("consent-library")
