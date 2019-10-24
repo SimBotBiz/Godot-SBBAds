@@ -19,16 +19,16 @@ public class SBBTest extends Godot.SingletonBase {
 
     /**
      * SBBTest Init
-     * @param p_instance_id
+     * @param p_instanceId
      * @param p_options
      */
-    public void init(int p_instance_id, Dictionary p_options) {
+    public void init(int p_instanceId, Dictionary p_options) {
         
         // Set godot instance id
-        instanceId = p_instance_id;
+        instanceId = p_instanceId;
 
         // Autoset isTestDevice if debug build detected
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             isTestDevice = true;
         }
 
@@ -44,8 +44,8 @@ public class SBBTest extends Godot.SingletonBase {
         // Java version
         SBBUtils.pushMessage(instanceId, "[SBBTest::init] Java 8 Language Features: " + SBBUtils.isJ8LFE());
 
-        // Options Info (java 8 - min sdk 24)
-        if(SBBUtils.isJ8LFE()) {
+        // Options Info
+        if (SBBUtils.isJ8LFE()) {
             p_options.forEach((k,v) -> SBBUtils.pushMessage(instanceId, 
                 "[SBBTest::init] " + k + " : " + v + " (" + v.getClass().getName() + ")"
             ));

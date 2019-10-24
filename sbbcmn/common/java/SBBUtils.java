@@ -35,7 +35,7 @@ public class SBBUtils {
      */
      public static boolean isJ8LFE() {
 
-        if(Build.VERSION.SDK_INT >= 24) {
+        if (Build.VERSION.SDK_INT >= 24) {
             return true;
         }
             
@@ -52,7 +52,7 @@ public class SBBUtils {
      */
     public static <T> boolean anyMatch(final T[] p_array, final T p_value) {
         
-        if(isJ8LFE()) {
+        if (isJ8LFE()) {
             return Arrays.stream(p_array).anyMatch(p_value::equals);
         } 
         
@@ -63,12 +63,12 @@ public class SBBUtils {
     /**
      * Log back to Godot
      * 
-     * @param p_instance_id
+     * @param p_instanceId
      * @param p_tag
      * @param p_message
      */
-    public static void log(int p_instance_id, String p_tag, String p_message) {
-        pushMessage(p_instance_id, "[" + p_tag + "] " + p_message);
+    public static void log(int p_instanceId, String p_tag, String p_message) {
+        pushMessage(p_instanceId, "[" + p_tag + "] " + p_message);
     }
 
 
@@ -77,11 +77,11 @@ public class SBBUtils {
      * messages are received by the _get_message()
      * callback function of the caller script
      * 
-     * @param p_instance_id
+     * @param p_instanceId
      * @param p_message
      */
-    public static void pushMessage(int p_instance_id, String p_message) {
-        GodotLib.calldeferred(p_instance_id, "_get_message", new Object[] { p_message });
+    public static void pushMessage(int p_instanceId, String p_message) {
+        GodotLib.calldeferred(p_instanceId, "_get_message", new Object[] { p_message });
     }
 
 
