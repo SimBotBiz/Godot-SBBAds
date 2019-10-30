@@ -17,7 +17,6 @@ def configure(env):
             env.android_add_dependency(
                 "implementation 'com.google.android.gms:play-services-ads:18.2.0'"
             )
-            env.android_add_res_dir("play-services-ads/res")
             env.android_add_java_dir("play-services-ads/java")
             env.android_add_to_manifest("play-services-ads/AndroidManifestChunk.xml")
             env.android_add_to_permissions("play-services-ads/AndroidPermissionsChunk.xml")
