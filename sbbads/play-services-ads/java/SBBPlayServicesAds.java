@@ -1,6 +1,7 @@
 package org.godotengine.godot;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import com.godot.game.R;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.initialization.AdapterStatus;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.rewarded.RewardItem;
@@ -32,11 +34,12 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
 
     protected Activity activity;
     private int instanceId;
+    private Boolean isMobileAdsInit = false;
     private Dictionary adOptions;
     private RewardedAd rewardedAd;
     private Boolean isTestDevice = false;
     private Boolean useTestAds = false;
-    private Boolean useNonPersAds = false;
+    private Boolean useNonPersonalizedAds = false;
 
     // test ad ids
     private final String bannerAd_testId = "ca-app-pub-3940256099942544/6300978111";
@@ -61,19 +64,50 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
         // Set godot instance id
         instanceId = p_instanceId;
 
-        // Autoset isTestDevice if debug build detected
+        // Auto set isTestDevice if debug build detected
         if (BuildConfig.DEBUG) {
             isTestDevice = true;
         }
 
-        // Initialize MobileAds
-        MobileAds.initialize(activity, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                SBBUtils.log(instanceId, "SBBPlayServicesAds", "onInitializationComplete");
-                GodotLib.calldeferred(instanceId, "_on_initialization_complete", new Object[] {});
-            }
-        });
+        /**
+         * Initialize MobileAds
+         * 
+         * MobileAds is initialized only once, I prefer to save the status
+         * in isMobileAdsInit, so I can return a meaningful state when init is 
+         * called again
+         * 
+         */ 
+        if (!isMobileAdsInit) {
+            MobileAds.initialize(activity, new OnInitializationCompleteListener() {
+                @Override
+                public void onInitializationComplete(InitializationStatus initializationStatus) {
+                    
+                    /**
+                     * For some reason this function is called twice upon initialization,
+                     * because I want to avoid firing the godot signal twice
+                     * I will use isMobileAdsInit flag to avoid that.
+                     */
+
+                    // log the status map
+                    for (Map.Entry<String, AdapterStatus> status : initializationStatus.getAdapterStatusMap().entrySet())  {
+                        SBBUtils.log(instanceId, "SBBPlayServicesAds",
+                            "InitializationStatus: " + status.getKey() + " : " + status.getValue().getInitializationState() + " (" + status.getValue().getDescription() + ")");
+                    }
+                    
+                    if (!isMobileAdsInit) {
+                        SBBUtils.log(instanceId, "SBBPlayServicesAds", "onInitializationComplete");
+                        GodotLib.calldeferred(instanceId, "_on_initialization_complete", new Object[] {});
+                        isMobileAdsInit = true;
+                    }
+                    
+                }
+            });
+        } else {
+            SBBUtils.log(instanceId, "SBBPlayServicesAds", "MobileAds already initialized!");
+            GodotLib.calldeferred(instanceId, "_on_initialization_complete", new Object[] {});
+        }
+        
+        
 
         /* Handle Ad Options Dictionary */
         
@@ -102,7 +136,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
         if (p_adOptions.containsKey("NON_PERSONALIZED_ADS")) {
 
             if (p_adOptions.get("NON_PERSONALIZED_ADS") instanceof Boolean) {
-                useNonPersAds = (Boolean) p_adOptions.get("NON_PERSONALIZED_ADS");
+                useNonPersonalizedAds = (Boolean) p_adOptions.get("NON_PERSONALIZED_ADS");
             } else {
                 SBBUtils.log(instanceId, "SBBPlayServicesAds",
                     "NON_PERSONALIZED_ADS, value type not valid! [" + p_adOptions.get("NON_PERSONALIZED_ADS").getClass().getName() + "]");
@@ -188,34 +222,47 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
      */
     public void loadRewardedAd(String p_adUnitId) {
         
-        // override ad id if test ad option is true
+        final String adUnitId;
+
         if (useTestAds) {
-            p_adUnitId = rewardedAd_testId;
+            adUnitId = rewardedAd_testId;
+        } else {
+            adUnitId = p_adUnitId;
         }
 
-        if (rewardedAd == null || !rewardedAd.isLoaded()) {
-            
-            rewardedAd = new RewardedAd(activity, p_adUnitId);
-            
-            rewardedAd.loadAd(
-                buildAdRequest(),
-                new RewardedAdLoadCallback() {
-                    @Override
-                    public void onRewardedAdLoaded() {
-                        SBBUtils.log(instanceId, "SBBPlayServicesAds", "onRewardedAdLoaded");
-                        GodotLib.calldeferred(instanceId, "_on_rewarded_ad_loaded", new Object[] {});
-                    }
+        activity.runOnUiThread(new Runnable() {    
+            @Override public void run() {
 
-                    @Override
-                    public void onRewardedAdFailedToLoad(int p_errorCode) {
-                        SBBUtils.log(instanceId, "SBBPlayServicesAds", "onRewardedAdFailedToLoad, errorCode: " + p_errorCode);
-                        GodotLib.calldeferred(instanceId, "_on_rewarded_ad_failed_to_loaded", new Object[] { p_errorCode });
-                    }
+                if (rewardedAd == null || !rewardedAd.isLoaded()) {
+            
+                    rewardedAd = new RewardedAd(activity, adUnitId);
+                    
+                    rewardedAd.loadAd(
+                        buildAdRequest(),
+                        new RewardedAdLoadCallback() {
+                            @Override
+                            public void onRewardedAdLoaded() {
+                                SBBUtils.log(instanceId, "SBBPlayServicesAds", "onRewardedAdLoaded");
+                                GodotLib.calldeferred(instanceId, "_on_rewarded_ad_loaded", new Object[] {});
+                            }
+        
+                            @Override
+                            public void onRewardedAdFailedToLoad(int p_errorCode) {
+                                SBBUtils.log(instanceId, "SBBPlayServicesAds", "onRewardedAdFailedToLoad, errorCode: " + p_errorCode);
+                                GodotLib.calldeferred(instanceId, "_on_rewarded_ad_failed_to_loaded", new Object[] { p_errorCode });
+                            }
+                        }
+                    );
+        
+                } else {
+                    // ad is already loaded
+                    SBBUtils.log(instanceId, "SBBPlayServicesAds", "RewardedAd already loaded!");
+                    GodotLib.calldeferred(instanceId, "_on_rewarded_ad_loaded", new Object[] {});
                 }
-            );
 
-        }
-    
+            }
+        });
+        
     }
 
 
@@ -242,7 +289,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
                         @Override
                         public void onUserEarnedReward(RewardItem p_rewardItem) {
                             SBBUtils.log(instanceId, "SBBPlayServicesAds",
-                                "onUserEarnedReward, currency: " + p_rewardItem.getType() + ", ammount: " + p_rewardItem.getAmount());
+                                "onUserEarnedReward, currency: " + p_rewardItem.getType() + ", amount: " + p_rewardItem.getAmount());
                             GodotLib.calldeferred(instanceId, "_on_user_earned_reward",
                                 new Object[] { p_rewardItem.getType(), p_rewardItem.getAmount() });
                         }
@@ -264,7 +311,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
     }
 
     /**
-     * Godot Singletone Module Init
+     * Godot Singleton Module Init
      * 
      * @param p_activity
      * @return a PlayServicesAds singleton instance
@@ -275,7 +322,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
 
 
     /**
-     * PlayServicesAds contructor
+     * PlayServicesAds constructor
      * 
      * @param p_activity
      */
@@ -320,7 +367,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
             adBuilder.addTestDevice(SBBUtils.getDeviceId(activity));
         }
 
-        if (useNonPersAds) {
+        if (useNonPersonalizedAds) {
             Bundle extras = new Bundle();
             extras.putString("npa", "1");
             adBuilder.addNetworkExtrasBundle(AdMobAdapter.class, extras);

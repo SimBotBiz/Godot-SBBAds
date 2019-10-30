@@ -29,12 +29,15 @@ func rewarded_ad_set_state(p_state: String):
 	match p_state:
 		"loading":
 			rewarded_ad_ready = false
+			$RewardedAdBtn.disabled = true
 			$RewardedAdBtn.text = "Loading..."
 		"ready":
 			rewarded_ad_ready = true
+			$RewardedAdBtn.disabled = false
 			$RewardedAdBtn.text = "Show Rewarded Ad"
 		"error", _:
 			rewarded_ad_ready = false
+			$RewardedAdBtn.disabled = false
 			$RewardedAdBtn.text = "Load Rewarded Ad"
 
 # Signals
@@ -45,12 +48,12 @@ func _on_MenuBtn_pressed() -> void:
 
 
 func _on_RewardedAdBtn_pressed() -> void:
-
-	if rewarded_ad_ready:
-		psa.showRewardedAd()
-	else:
-		psa.loadRewardedAd(rewarded_ad_uid)
-		rewarded_ad_set_state("loading")
+	if psa:
+		if rewarded_ad_ready:
+			psa.showRewardedAd()
+		else:
+			psa.loadRewardedAd(rewarded_ad_uid)
+			rewarded_ad_set_state("loading")
 
 
 func _on_InterstitialAdBtn_pressed() -> void:
@@ -64,6 +67,13 @@ func _get_message(p_message: String) -> void:
 	print(p_message)
 	print_app(p_message)
 
+
+# Init
+#
+func _on_initialization_complete() -> void:
+	print("_on_initialization_complete")
+	$RewardedAdBtn.disabled = false
+	#$InterstitialAdBtn.disabled = false
 
 # Rewarded Ad Load
 #

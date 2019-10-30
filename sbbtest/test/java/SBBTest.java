@@ -27,38 +27,38 @@ public class SBBTest extends Godot.SingletonBase {
         // Set godot instance id
         instanceId = p_instanceId;
 
-        // Autoset isTestDevice if debug build detected
+        // Auto set isTestDevice if debug build detected
         if (BuildConfig.DEBUG) {
             isTestDevice = true;
         }
 
         // Instance ID
-        SBBUtils.pushMessage(instanceId, "[SBBTest::init] Instance ID: " + instanceId);
+        SBBUtils.log(instanceId, "SBBTest", "Instance ID: " + instanceId);
 
         // Device ID
-        SBBUtils.pushMessage(instanceId, "[SBBTest::init] Device ID: " + SBBUtils.getDeviceId(activity));
+        SBBUtils.log(instanceId, "SBBTest", "Device ID: " + SBBUtils.getDeviceId(activity));
 
         // Test Device
-        SBBUtils.pushMessage(instanceId, "[SBBTest::init] Test Device: " + isTestDevice);
+        SBBUtils.log(instanceId, "SBBTest", "Test Device: " + isTestDevice);
 
         // Java version
-        SBBUtils.pushMessage(instanceId, "[SBBTest::init] Java 8 Language Features: " + SBBUtils.isJ8LFE());
+        SBBUtils.log(instanceId, "SBBTest", "Java 8 Language Features: " + SBBUtils.isJ8LFE());
 
         // Options Info
         if (SBBUtils.isJ8LFE()) {
-            p_options.forEach((k,v) -> SBBUtils.pushMessage(instanceId, 
-                "[SBBTest::init] " + k + " : " + v + " (" + v.getClass().getName() + ")"
+            p_options.forEach((k,v) -> SBBUtils.log(instanceId, "SBBTest", 
+                k + " : " + v + " (" + v.getClass().getName() + ")"
             ));
         } else {
             for(Map.Entry<String, Object> entry : p_options.entrySet())  {
-                SBBUtils.pushMessage(instanceId, 
-                    "[SBBTest::init] " + entry.getKey() + " : " + entry.getValue() + " (" + entry.getValue().getClass().getName() + ")"
+                SBBUtils.log(instanceId, "SBBTest", 
+                    entry.getKey() + " : " + entry.getValue() + " (" + entry.getValue().getClass().getName() + ")"
                 );
             }
         }
     }
 
-    /* Godot Singletone Module Init */
+    /* Godot Singleton Module Init */
     static public Godot.SingletonBase initialize(Activity p_activity) {
         return new SBBTest(p_activity);
     }
@@ -74,13 +74,13 @@ public class SBBTest extends Godot.SingletonBase {
 
     /* Activity States */
     protected void onMainPause() {
-        SBBUtils.pushMessage(instanceId, "[SBBTest::onMainPause]");
+        SBBUtils.log(instanceId, "SBBTest", "[SBBTest::onMainPause]");
     }
     protected void onMainResume() {
-        SBBUtils.pushMessage(instanceId, "[SBBTest::onMainResume]");
+        SBBUtils.log(instanceId, "SBBTest", "[SBBTest::onMainResume]");
     }
     protected void onMainDestroy() {
-        SBBUtils.pushMessage(instanceId, "[SBBTest::onMainDestroy]");
+        SBBUtils.log(instanceId, "SBBTest", "[SBBTest::onMainDestroy]");
     }
 
 }

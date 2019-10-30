@@ -60,6 +60,7 @@ margin_top = 223.0
 margin_right = -30.0
 margin_bottom = 373.0
 custom_fonts/font = ExtResource( 4 )
+disabled = true
 text = "Load Rewarded Ad"
 clip_text = true
 
@@ -71,6 +72,7 @@ margin_top = 223.0
 margin_right = 330.0
 margin_bottom = 373.0
 custom_fonts/font = ExtResource( 4 )
+disabled = true
 text = "Load Interstitial Ad"
 clip_text = true
 [connection signal="pressed" from="MenuBtn" to="." method="_on_MenuBtn_pressed"]
