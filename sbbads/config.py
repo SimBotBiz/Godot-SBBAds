@@ -1,6 +1,6 @@
 artifacts = {
     'play-services-ads': True,
-    'consent-library': False,
+    'consent-library': True,
 }
 
 
@@ -26,4 +26,5 @@ def configure(env):
             env.android_add_dependency(
                 "implementation 'com.google.android.ads.consent:consent-library:1.0.7'"
             )
-            env.android_add_java_dir("consent-library")
+            env.android_add_java_dir("consent-library/java")
+            env.android_add_to_manifest("play-services-ads/AndroidManifestChunk.xml")

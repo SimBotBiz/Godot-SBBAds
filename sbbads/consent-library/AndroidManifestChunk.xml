@@ -1,0 +1,4 @@
+<!-- Delay app measurement until MobileAds.initialize() is called. -->
+<meta-data
+    android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
+    android:value="true"/>
