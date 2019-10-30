@@ -7,7 +7,6 @@ import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.utils.Crypt;
 
 import android.os.Build;
-import android.util.Log;
 import android.app.Activity;
 import android.provider.Settings;
 

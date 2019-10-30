@@ -1,19 +1,15 @@
 package org.godotengine.godot;
 
-import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import com.godot.game.R;
 import com.godot.game.BuildConfig;
 
 import org.godotengine.godot.Godot;
+import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.Dictionary;
-import org.godotengine.godot.utils.Crypt;
 
 import android.app.Activity;
-import android.util.Log;
-import jdk.nashorn.internal.ir.BlockLexicalContext;
 import android.os.Bundle;
 
 import com.google.android.gms.ads.AdRequest;
@@ -322,7 +318,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
 
 
     /**
-     * PlayServicesAds constructor
+     * SBBPlayServicesAds constructor
      * 
      * @param p_activity
      */
