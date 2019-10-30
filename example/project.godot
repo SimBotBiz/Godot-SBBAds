@@ -15,13 +15,17 @@ _global_script_class_icons={
 
 [android]
 
-modules="org/godotengine/godot/SBBTest"
+modules="org/godotengine/godot/SBBTest,org/godotengine/godot/SBBPlayServicesAds"
 
 [application]
 
 config/name="SBB Ads"
-run/main_scene="res://Example.tscn"
+run/main_scene="res://Menu.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+SceneManager="*res://SceneManager.gd"
 
 [display]
 
@@ -32,6 +36,10 @@ window/size/test_height=640
 window/handheld/orientation="portrait"
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
+
+[logging]
+
+file_logging/enable_file_logging=true
 
 [rendering]
 

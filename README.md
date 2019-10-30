@@ -2,8 +2,8 @@
 
 ## Key features over similar godot modules
 
-- Support for play-services-ads v17  
-[https://developers.google.com/admob/android/rel-notes/#17.2.1](https://developers.google.com/admob/android/rel-notes/#17.2.1)
+- Support for play-services-ads v18  
+[https://developers.google.com/admob/android/rel-notes/#17.2.1](https://developers.google.com/admob/android/rel-notes/#18.2.0)
 
 - Integration with consent-library v1  
 [https://developers.google.com/admob/android/eu-consent](https://developers.google.com/admob/android/eu-consent)
@@ -15,7 +15,7 @@
 [https://developers.google.com/admob/android/rewarded-ads](https://developers.google.com/admob/android/rewarded-ads)
 
 ---
-## How-to compile for Godot 3.1.1
+## How-to compile for Godot 3.1.1 (AndroidX Mod)
 
 > Enable Java 8 in
 >
