@@ -2,11 +2,13 @@ extends Node
 
 var test: Object = null
 var test_opt: Dictionary = {
-	"OPTION_1": true,
-	"OPTION_2": "true",
-	"OPTION_3": "Hello Godot!",
-	"OPTION_4": 123,
-	"OPTION_5": 1.23,
+	"OPTION_1": true,						# Boolean
+	"OPTION_2": "true",						# String
+	"OPTION_3": "Hello Godot!",				# String
+	"OPTION_4": 123,						# Integer
+	"OPTION_5": 1.23,						# Double
+	"OPTION_6": [1, 2, 3],					# Integer[]
+	"OPTION_7": ["one", "two", "three"],	# String[]
 }
 
 func _ready() -> void:
