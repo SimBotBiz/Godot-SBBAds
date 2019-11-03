@@ -30,12 +30,15 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
 
     protected Activity activity;
     private int instanceId;
-    private Boolean isMobileAdsInit = false;
-    private Dictionary adOptions;
-    private RewardedAd rewardedAd;
+
+    // flags
     private Boolean isTestDevice = false;
+    private Boolean isMobileAdsInit = false;
     private Boolean useTestAds = false;
     private Boolean useNonPersonalizedAds = false;
+
+    // instances
+    private RewardedAd rewardedAd;
 
     // test ad ids
     private final String bannerAd_testId = "ca-app-pub-3940256099942544/6300978111";
@@ -47,15 +50,33 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
      * Play Services Ads Init
      * 
      * @param p_instanceId
-     * @param p_adOptions  a dictionary of ad options, available values are:
+     * @param p_options  a dictionary of options, available values are:
+     * 
      *      - FORCE_TEST_DEVICE [Boolean] (true, false)
+     *          Flag the device as a test device (or not), this will overwrite the
+     *          default behavior (test device true if a debug build or runs on AVD).
+     *          https://developers.google.com/admob/android/test-ads#enable_test_devices
+     * 
      *      - USE_TEST_ADS [Boolean] (true, false)
-     *      - NON_PERSONALIZED_ADS [Boolean] (true, false)
+     *          Provided ad UID will be replaced by the appropriate test UID,
+     *          using these test ads gives a more consistent behavior,
+     *          ads are always show, that's not true with only the test device flag.
+     *          https://developers.google.com/admob/android/test-ads#sample_ad_units
+     * 
+     *      - NON_PERSONALIZED_ADS [Boolean] (true, false),
+     *          This is what you need to set if using also the consent module!
+     *          https://developers.google.com/admob/android/eu-consent#forward_consent_to_the_google_mobile_ads_sdk
+     * 
      *      - TAG_FOR_CHILD_DIRECTED_TREATMENT [Integer] (1 = true, 0 = false, -1 = unspecified)
+     *          https://developers.google.com/admob/android/targeting#child-directed_setting
+     * 
      *      - TAG_FOR_UNDER_AGE_OF_CONSENT [Integer] (1 = true, 0 = false, -1 = unspecified)
+     *          https://developers.google.com/admob/android/targeting#users_under_the_age_of_consent
+     *          
      *      - MAX_AD_CONTENT_RATING [String] ('', 'G', 'PG', 'T', 'MA')
+     *          https://developers.google.com/admob/android/targeting#ad_content_filtering
      */
-    public void init(int p_instanceId, Dictionary p_adOptions) {
+    public void init(int p_instanceId, Dictionary p_options) {
         
         // Set godot instance id
         instanceId = p_instanceId;
@@ -105,42 +126,42 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
         
         
 
-        /* Handle Ad Options Dictionary */
+        /* Handle the Options Dictionary */
         
-        if (p_adOptions.containsKey("FORCE_TEST_DEVICE")) {
+        if (p_options.containsKey("FORCE_TEST_DEVICE")) {
 
-            if (p_adOptions.get("FORCE_TEST_DEVICE") instanceof Boolean) {
-                isTestDevice = (Boolean) p_adOptions.get("FORCE_TEST_DEVICE");
+            if (p_options.get("FORCE_TEST_DEVICE") instanceof Boolean) {
+                isTestDevice = (Boolean) p_options.get("FORCE_TEST_DEVICE");
             } else {
                 SBBUtils.log(instanceId, "SBBPlayServicesAds",
-                    "FORCE_TEST_DEVICE, value type not valid! [" + p_adOptions.get("FORCE_TEST_DEVICE").getClass().getName() + "]");
+                    "FORCE_TEST_DEVICE, value type not valid! [" + p_options.get("FORCE_TEST_DEVICE").getClass().getName() + "]");
             }
             
         }
 
-        if (p_adOptions.containsKey("USE_TEST_ADS")) {
+        if (p_options.containsKey("USE_TEST_ADS")) {
 
-            if (p_adOptions.get("USE_TEST_ADS") instanceof Boolean) {
-                useTestAds = (Boolean) p_adOptions.get("USE_TEST_ADS");
+            if (p_options.get("USE_TEST_ADS") instanceof Boolean) {
+                useTestAds = (Boolean) p_options.get("USE_TEST_ADS");
             } else {
                 SBBUtils.log(instanceId, "SBBPlayServicesAds",
-                    "USE_TEST_ADS, value type not valid! [" + p_adOptions.get("USE_TEST_ADS").getClass().getName() + "]");
+                    "USE_TEST_ADS, value type not valid! [" + p_options.get("USE_TEST_ADS").getClass().getName() + "]");
             }
 
         }
 
-        if (p_adOptions.containsKey("NON_PERSONALIZED_ADS")) {
+        if (p_options.containsKey("NON_PERSONALIZED_ADS")) {
 
-            if (p_adOptions.get("NON_PERSONALIZED_ADS") instanceof Boolean) {
-                useNonPersonalizedAds = (Boolean) p_adOptions.get("NON_PERSONALIZED_ADS");
+            if (p_options.get("NON_PERSONALIZED_ADS") instanceof Boolean) {
+                useNonPersonalizedAds = (Boolean) p_options.get("NON_PERSONALIZED_ADS");
             } else {
                 SBBUtils.log(instanceId, "SBBPlayServicesAds",
-                    "NON_PERSONALIZED_ADS, value type not valid! [" + p_adOptions.get("NON_PERSONALIZED_ADS").getClass().getName() + "]");
+                    "NON_PERSONALIZED_ADS, value type not valid! [" + p_options.get("NON_PERSONALIZED_ADS").getClass().getName() + "]");
             }
 
         }
 
-        if (p_adOptions.containsKey("TAG_FOR_CHILD_DIRECTED_TREATMENT")) {
+        if (p_options.containsKey("TAG_FOR_CHILD_DIRECTED_TREATMENT")) {
             
             Integer[] allowedValues = {
                 RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_UNSPECIFIED,
@@ -148,10 +169,10 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
                 RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE,
             };
 
-            if (SBBUtils.anyMatch(allowedValues, p_adOptions.get("TAG_FOR_CHILD_DIRECTED_TREATMENT"))) {
+            if (SBBUtils.anyMatch(allowedValues, p_options.get("TAG_FOR_CHILD_DIRECTED_TREATMENT"))) {
                 // get and update actual configuration
                 RequestConfiguration requestConfiguration = MobileAds.getRequestConfiguration().toBuilder()
-                    .setTagForChildDirectedTreatment((Integer) p_adOptions.get("TAG_FOR_CHILD_DIRECTED_TREATMENT"))
+                    .setTagForChildDirectedTreatment((Integer) p_options.get("TAG_FOR_CHILD_DIRECTED_TREATMENT"))
                     .build();
                 // set configuration
                 MobileAds.setRequestConfiguration(requestConfiguration);
@@ -162,7 +183,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
 
         }
         
-        if (p_adOptions.containsKey("TAG_FOR_UNDER_AGE_OF_CONSENT")) {
+        if (p_options.containsKey("TAG_FOR_UNDER_AGE_OF_CONSENT")) {
             
             Integer[] allowedValues = {
                 RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_UNSPECIFIED,
@@ -170,10 +191,10 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
                 RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE,
             };
 
-            if (SBBUtils.anyMatch(allowedValues, p_adOptions.get("TAG_FOR_UNDER_AGE_OF_CONSENT"))) {
+            if (SBBUtils.anyMatch(allowedValues, p_options.get("TAG_FOR_UNDER_AGE_OF_CONSENT"))) {
                 // get and update actual configuration
                 RequestConfiguration requestConfiguration = MobileAds.getRequestConfiguration().toBuilder()
-                    .setTagForUnderAgeOfConsent((Integer) p_adOptions.get("TAG_FOR_UNDER_AGE_OF_CONSENT"))
+                    .setTagForUnderAgeOfConsent((Integer) p_options.get("TAG_FOR_UNDER_AGE_OF_CONSENT"))
                     .build();
                 // set configuration
                 MobileAds.setRequestConfiguration(requestConfiguration);
@@ -184,7 +205,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
 
         }
 
-        if (p_adOptions.containsKey("MAX_AD_CONTENT_RATING")) {
+        if (p_options.containsKey("MAX_AD_CONTENT_RATING")) {
             
             String[] allowedValues = {
                 RequestConfiguration.MAX_AD_CONTENT_RATING_UNSPECIFIED,
@@ -194,10 +215,10 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
                 RequestConfiguration.MAX_AD_CONTENT_RATING_MA,
             };
 
-            if (SBBUtils.anyMatch(allowedValues, p_adOptions.get("MAX_AD_CONTENT_RATING"))) {
+            if (SBBUtils.anyMatch(allowedValues, p_options.get("MAX_AD_CONTENT_RATING"))) {
                 // get and update actual configuration
                 RequestConfiguration requestConfiguration = MobileAds.getRequestConfiguration().toBuilder()
-                    .setMaxAdContentRating((String) p_adOptions.get("MAX_AD_CONTENT_RATING"))
+                    .setMaxAdContentRating((String) p_options.get("MAX_AD_CONTENT_RATING"))
                     .build();
                 // set configuration
                 MobileAds.setRequestConfiguration(requestConfiguration);
@@ -310,7 +331,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
      * Godot Singleton Module Init
      * 
      * @param p_activity
-     * @return a PlayServicesAds singleton instance
+     * @return a SBBPlayServicesAds singleton instance
      */
     static public Godot.SingletonBase initialize(Activity p_activity) {
         return new SBBPlayServicesAds(p_activity);
