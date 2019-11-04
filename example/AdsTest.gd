@@ -13,6 +13,11 @@ var rewarded_ad_ready: bool = false
 
 
 func _ready() -> void:
+
+	# Foward Consent
+	psa_opt["NON_PERSONALIZED_ADS"] = Globals.non_personalized_ads
+
+	# get and init SBBPlayServicesAds
 	if Engine.has_singleton("SBBPlayServicesAds"):
 		psa = Engine.get_singleton("SBBPlayServicesAds")
 		psa.init(get_instance_id(), psa_opt)

@@ -14,6 +14,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
 AppTestScene = "res://AppTest.tscn"
+ConsentTestScene = "res://ConsentTest.tscn"
 AdsTestScene = "res://AdsTest.tscn"
 
 [node name="Label" type="Label" parent="."]
@@ -33,20 +34,31 @@ valign = 1
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -150.0
-margin_top = 565.0
+margin_top = 465.0
 margin_right = 150.0
-margin_bottom = 715.0
+margin_bottom = 615.0
 custom_fonts/font = SubResource( 1 )
 text = "App Test"
+
+[node name="ConsentTestBtn" type="Button" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -150.0
+margin_top = 634.0
+margin_right = 150.0
+margin_bottom = 784.0
+custom_fonts/font = SubResource( 1 )
+text = "Consent Test"
 
 [node name="AdsTestBtn" type="Button" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -150.0
-margin_top = 754.0
+margin_top = 809.0
 margin_right = 150.0
-margin_bottom = 904.0
+margin_bottom = 959.0
 custom_fonts/font = SubResource( 1 )
 text = "Ads Test"
 [connection signal="pressed" from="AppTestBtn" to="." method="_on_AppTestBtn_pressed"]
+[connection signal="pressed" from="ConsentTestBtn" to="." method="_on_ConsentTestBtn_pressed"]
 [connection signal="pressed" from="AdsTestBtn" to="." method="_on_AdsTestBtn_pressed"]

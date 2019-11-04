@@ -15,7 +15,7 @@ _global_script_class_icons={
 
 [android]
 
-modules="org/godotengine/godot/SBBTest,org/godotengine/godot/SBBPlayServicesAds"
+modules="org/godotengine/godot/SBBTest,org/godotengine/godot/SBBPlayServicesAds,org/godotengine/godot/SBBConsent"
 
 [application]
 
@@ -25,6 +25,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
+Globals="*res://Globals.gd"
 SceneManager="*res://SceneManager.gd"
 
 [display]
