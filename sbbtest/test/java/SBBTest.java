@@ -26,6 +26,7 @@ public class SBBTest extends Godot.SingletonBase {
         
         // Set godot instance id
         instanceId = p_instanceId;
+        SBBUtils.init(instanceId, "SBBTest");
 
         // Auto set isTestDevice if debug build detected
         if (BuildConfig.DEBUG) {
@@ -33,25 +34,25 @@ public class SBBTest extends Godot.SingletonBase {
         }
 
         // Instance ID
-        SBBUtils.log(instanceId, "SBBTest", "Instance ID: " + instanceId);
+        SBBUtils.log("Instance ID: " + instanceId);
 
         // Device ID
-        SBBUtils.log(instanceId, "SBBTest", "Device ID: " + SBBUtils.getDeviceId(activity));
+        SBBUtils.log("Device ID: " + SBBUtils.getDeviceId(activity));
 
         // Test Device
-        SBBUtils.log(instanceId, "SBBTest", "Test Device: " + isTestDevice);
+        SBBUtils.log("Test Device: " + isTestDevice);
 
         // Java version
-        SBBUtils.log(instanceId, "SBBTest", "Java 8 Language Features: " + SBBUtils.isJ8LFE());
+        SBBUtils.log("Java 8 Language Features: " + SBBUtils.isJ8LFE());
 
         // Options Info
         if (SBBUtils.isJ8LFE()) {
-            p_options.forEach((k,v) -> SBBUtils.log(instanceId, "SBBTest", 
+            p_options.forEach((k,v) -> SBBUtils.log(
                 k + " : " + v + " (" + v.getClass().getName() + ")"
             ));
         } else {
             for(Map.Entry<String, Object> entry : p_options.entrySet())  {
-                SBBUtils.log(instanceId, "SBBTest", 
+                SBBUtils.log(
                     entry.getKey() + " : " + entry.getValue() + " (" + entry.getValue().getClass().getName() + ")"
                 );
             }
@@ -74,13 +75,15 @@ public class SBBTest extends Godot.SingletonBase {
 
     /* Activity States */
     protected void onMainPause() {
-        SBBUtils.log(instanceId, "SBBTest", "[SBBTest::onMainPause]");
+        SBBUtils.log("onMainPause");
     }
+
     protected void onMainResume() {
-        SBBUtils.log(instanceId, "SBBTest", "[SBBTest::onMainResume]");
+        SBBUtils.log("onMainResume");
     }
+    
     protected void onMainDestroy() {
-        SBBUtils.log(instanceId, "SBBTest", "[SBBTest::onMainDestroy]");
+        SBBUtils.log("onMainDestroy");
     }
 
 }

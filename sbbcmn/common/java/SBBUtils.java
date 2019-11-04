@@ -4,13 +4,29 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import org.godotengine.godot.GodotLib;
+import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.utils.Crypt;
 
 import android.os.Build;
 import android.app.Activity;
 import android.provider.Settings;
 
+
 public class SBBUtils {
+
+    private static int instanceId;
+    private static String tag;
+
+    
+    /**
+     * Initialize Utils
+     * 
+     * @param p_instanceId
+     */
+    public static void init(int p_instanceId, String p_tag) {
+        instanceId = p_instanceId;
+        tag = p_tag;
+    }
 
 
     /**
@@ -60,14 +76,33 @@ public class SBBUtils {
 
 
     /**
+     * Validate dictionary option
+     * 
+     * @param p_dic
+     * @param p_opt
+     * @param type
+     * @return true if option exists and type is correct
+     */
+    public static boolean isValidOpt(Dictionary p_dic, String p_opt, Class type) {
+        if (p_dic.containsKey(p_opt)) {
+            if (type.isInstance(p_dic.get(p_opt))) {
+                return true;
+            } else {
+                SBBUtils.log(p_opt + ", value type not valid! [" + p_dic.get(p_opt).getClass().getName() + "]");
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
      * Log back to Godot
      * 
-     * @param p_instanceId
-     * @param p_tag
      * @param p_message
      */
-    public static void log(int p_instanceId, String p_tag, String p_message) {
-        pushMessage(p_instanceId, "[" + p_tag + "] " + p_message);
+    public static void log(String p_message) {
+        pushMessage("[" + tag + "] " + p_message);
     }
 
 
@@ -76,11 +111,10 @@ public class SBBUtils {
      * messages are received by the _get_message()
      * callback function of the caller script
      * 
-     * @param p_instanceId
      * @param p_message
      */
-    public static void pushMessage(int p_instanceId, String p_message) {
-        GodotLib.calldeferred(p_instanceId, "_get_message", new Object[] { p_message });
+    public static void pushMessage(String p_message) {
+        GodotLib.calldeferred(instanceId, "_get_message", new Object[] { p_message });
     }
 
 
