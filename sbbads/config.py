@@ -27,5 +27,5 @@ def configure(env):
                 "implementation 'com.google.android.ads.consent:consent-library:1.0.7'"
             )
             env.android_add_java_dir("consent-library/java")
-            env.android_add_to_manifest("play-services-ads/AndroidManifestChunk.xml")
             env.android_add_asset_dir("consent-library/asset")
+            env.android_add_to_manifest("consent-library/AndroidManifestChunk.xml")
