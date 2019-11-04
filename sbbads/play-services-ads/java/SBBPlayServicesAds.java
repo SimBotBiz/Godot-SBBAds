@@ -107,9 +107,11 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
                      */
 
                     // log the status map
-                    for (Map.Entry<String, AdapterStatus> status : initializationStatus.getAdapterStatusMap().entrySet())  {
-                        SBBUtils.log(
-                            "InitializationStatus: " + status.getKey() + " : " + status.getValue().getInitializationState() + " (" + status.getValue().getDescription() + ")");
+                    for (Map.Entry<String, AdapterStatus> status : initializationStatus
+                                                                    .getAdapterStatusMap().entrySet()) {
+                        SBBUtils.log("InitializationStatus: " + status.getKey() + " : "
+                            + status.getValue().getInitializationState()
+                            + " (" + status.getValue().getDescription() + ")");
                     }
                     
                     if (!isMobileAdsInit) {
@@ -157,8 +159,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
                 // set configuration
                 MobileAds.setRequestConfiguration(requestConfiguration);
             } else {
-                SBBUtils.log(
-                    "TAG_FOR_CHILD_DIRECTED_TREATMENT, value not allowed!");
+                SBBUtils.log("TAG_FOR_CHILD_DIRECTED_TREATMENT, value not allowed!");
             }
 
         }
@@ -179,8 +180,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
                 // set configuration
                 MobileAds.setRequestConfiguration(requestConfiguration);
             } else {
-                SBBUtils.log(
-                    "TAG_FOR_UNDER_AGE_OF_CONSENT, value not allowed!");
+                SBBUtils.log("TAG_FOR_UNDER_AGE_OF_CONSENT, value not allowed!");
             }
 
         }
@@ -203,8 +203,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
                 // set configuration
                 MobileAds.setRequestConfiguration(requestConfiguration);
             } else {
-                SBBUtils.log(
-                    "MAX_AD_CONTENT_RATING, value not allowed!");
+                SBBUtils.log("MAX_AD_CONTENT_RATING, value not allowed!");
             }
 
         }
@@ -246,7 +245,8 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
                             @Override
                             public void onRewardedAdFailedToLoad(int p_errorCode) {
                                 SBBUtils.log("onRewardedAdFailedToLoad, errorCode: " + p_errorCode);
-                                GodotLib.calldeferred(instanceId, "_on_rewarded_ad_failed_to_loaded", new Object[] { p_errorCode });
+                                GodotLib.calldeferred(instanceId, "_on_rewarded_ad_failed_to_loaded",
+                                    new Object[] { p_errorCode });
                             }
                         }
                     );
@@ -285,8 +285,8 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
 
                         @Override
                         public void onUserEarnedReward(RewardItem p_rewardItem) {
-                            SBBUtils.log(
-                                "onUserEarnedReward, currency: " + p_rewardItem.getType() + ", amount: " + p_rewardItem.getAmount());
+                            SBBUtils.log("onUserEarnedReward, currency: " + p_rewardItem.getType()
+                                            + ", amount: " + p_rewardItem.getAmount());
                             GodotLib.calldeferred(instanceId, "_on_user_earned_reward",
                                 new Object[] { p_rewardItem.getType(), p_rewardItem.getAmount() });
                         }
@@ -294,7 +294,8 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
                         @Override
                         public void onRewardedAdFailedToShow(int p_errorCode) {
                             SBBUtils.log("onRewardedAdFailedToShow, errorCode: " + p_errorCode);
-                            GodotLib.calldeferred(instanceId, "_on_rewarded_ad_failed_to_show", new Object[] { p_errorCode });
+                            GodotLib.calldeferred(instanceId, "_on_rewarded_ad_failed_to_show",
+                                new Object[] { p_errorCode });
                         }
                     };
 

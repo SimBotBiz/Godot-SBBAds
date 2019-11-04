@@ -12,6 +12,7 @@ import org.godotengine.godot.Dictionary;
 import android.app.Activity;
 import android.content.Context;
 
+import com.google.ads.consent.DebugGeography;
 import com.google.ads.consent.ConsentStatus;
 import com.google.ads.consent.ConsentInformation;
 import com.google.ads.consent.ConsentInfoUpdateListener;
@@ -29,7 +30,8 @@ public class SBBConsent extends Godot.SingletonBase {
     private ConsentInformation consentInformation;
 
     // flags
-    private Boolean isTestDevice = false;
+    private boolean isTestDevice = false;
+    private DebugGeography debugGeography = DebugGeography.DEBUG_GEOGRAPHY_DISABLED;
 
     /**
      * Consent Library Init
@@ -41,6 +43,16 @@ public class SBBConsent extends Godot.SingletonBase {
      *          Flag the device as a test device (or not), this will overwrite the
      *          default behavior (test device true if a debug build or runs on AVD).
      *          https://developers.google.com/admob/android/eu-consent#testing
+     *       
+     *      - DEBUG_GEOGRAPHY (Integer) [0 = DISABLED, 1 = EEA, 2 = NOT_EEA]
+     *          https://developers.google.com/admob/android/eu-consent#testing
+     * 
+     *      - TAG_FOR_UNDER_AGE_OF_CONSENT (Boolean) [true, false]
+     *          If a publisher is aware that the user is under the age of consent,
+     *          all ad requests must set TFUA (Tag For Users under the Age of Consent in Europe).
+     *          This setting takes effect for all future ad requests.
+     *          Once the TFUA setting is enabled, the Google-rendered consent form will fail to load.
+     *          https://developers.google.com/admob/android/eu-consent#users_under_the_age_of_consent
      */
     public void init(int p_instanceId, Dictionary p_options) {
         
@@ -60,7 +72,27 @@ public class SBBConsent extends Godot.SingletonBase {
         /* Handle the Options Dictionary */
         
         if (SBBUtils.isValidOpt(p_options, "FORCE_TEST_DEVICE", Boolean.class)) {
-            isTestDevice = (Boolean) p_options.get("FORCE_TEST_DEVICE");
+            isTestDevice = (boolean) p_options.get("FORCE_TEST_DEVICE");
+        }
+
+        if (SBBUtils.isValidOpt(p_options, "DEBUG_GEOGRAPHY", Integer.class)) {
+            if (SBBUtils.anyMatch(DebugGeography.values(), p_options.get("DEBUG_GEOGRAPHY"))) {
+               debugGeography = DebugGeography.values()[(int) p_options.get("DEBUG_GEOGRAPHY")];
+            } else {
+                SBBUtils.log("DEBUG_GEOGRAPHY, value not allowed!");
+            }
+        }
+
+        // debug options
+        if (isTestDevice) {
+            // add test device
+            consentInformation.addTestDevice(SBBUtils.getDeviceId(activity));
+            // set debug geography
+            consentInformation.setDebugGeography(debugGeography);
+        }
+
+        if (SBBUtils.isValidOpt(p_options, "TAG_FOR_UNDER_AGE_OF_CONSENT", Boolean.class)) {
+            consentInformation.setTagForUnderAgeOfConsent((boolean) p_options.get("TAG_FOR_UNDER_AGE_OF_CONSENT"));
         }
 
     }
@@ -106,8 +138,9 @@ public class SBBConsent extends Godot.SingletonBase {
                     // Get location
                     Boolean isRequestLocationInEeaOrUnknown = consentInformation.isRequestLocationInEeaOrUnknown();
 
-                    SBBUtils.log(
-                        "onConsentInfoUpdated, consentStatus: " + consentStatus + ", isRequestLocationInEeaOrUnknown: " + isRequestLocationInEeaOrUnknown);
+                    SBBUtils.log("onConsentInfoUpdated, consentStatus: " + consentStatus
+                        + ", isRequestLocationInEeaOrUnknown: " + isRequestLocationInEeaOrUnknown);
+                    
                     GodotLib.calldeferred(instanceId, "_on_consent_info_updated",
                         new Object[] { consentStatus.name(), isRequestLocationInEeaOrUnknown });
                 }
@@ -115,7 +148,8 @@ public class SBBConsent extends Godot.SingletonBase {
                 @Override
                 public void onFailedToUpdateConsentInfo(String errorDescription) {
                     SBBUtils.log("onFailedToUpdateConsentInfo, errorDescription: " + errorDescription);
-                    GodotLib.calldeferred(instanceId, "_on_failed_to_update_consent_info", new Object[] { errorDescription });
+                    GodotLib.calldeferred(instanceId, "_on_failed_to_update_consent_info",
+                        new Object[] { errorDescription });
                 }
             }
         );
@@ -155,8 +189,8 @@ public class SBBConsent extends Godot.SingletonBase {
 
                 @Override
                 public void onConsentFormClosed(ConsentStatus consentStatus, Boolean userPrefersAdFree) {
-                    SBBUtils.log(
-                        "onConsentFormClosed, consentStatus: " + consentStatus + ", userPrefersAdFree: " + userPrefersAdFree);
+                    SBBUtils.log("onConsentFormClosed, consentStatus: " + consentStatus
+                        + ", userPrefersAdFree: " + userPrefersAdFree);
                     GodotLib.calldeferred(instanceId, "_on_consent_form_closed",
                         new Object[] { consentStatus.name(), userPrefersAdFree });
                 }
@@ -190,8 +224,10 @@ public class SBBConsent extends Godot.SingletonBase {
         ConsentForm form = formBuilder.build();
 
         // load the form
+        form.load();
 
         // show the form
+        form.show();
     }
 
 
@@ -226,15 +262,15 @@ public class SBBConsent extends Godot.SingletonBase {
 
     /* Activity States */
     protected void onMainPause() {
-        SBBUtils.log( "onMainPause");
+        SBBUtils.log("onMainPause");
     }
 
     protected void onMainResume() {
-        SBBUtils.log( "onMainResume");
+        SBBUtils.log("onMainResume");
     }
 
     protected void onMainDestroy() {
-        SBBUtils.log( "onMainDestroy");
+        SBBUtils.log("onMainDestroy");
     }
 
 }
