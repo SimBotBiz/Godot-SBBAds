@@ -7,8 +7,8 @@ var test_opt: Dictionary = {
 	"OPTION_3": "Hello Godot!",				# String
 	"OPTION_4": 123,						# Integer
 	"OPTION_5": 1.23,						# Double
-	"OPTION_6": [1, 2, 3],					# Integer[]
-	"OPTION_7": ["one", "two", "three"],	# String[]
+	#"OPTION_6": [1, 2, 3],					# Integer[] -> DOES NOT WORK!
+	#"OPTION_7": ["one", "two", "three"],	# String[] -> DOES NOT WORK!
 }
 
 func _ready() -> void:

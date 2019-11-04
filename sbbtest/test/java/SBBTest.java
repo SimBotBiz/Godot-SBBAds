@@ -2,7 +2,6 @@ package org.godotengine.godot;
 
 import java.util.Map;
 
-// import com.godot.game.R;
 import com.godot.game.BuildConfig;
 
 import org.godotengine.godot.Godot;
