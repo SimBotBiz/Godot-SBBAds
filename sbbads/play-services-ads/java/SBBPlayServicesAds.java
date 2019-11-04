@@ -130,15 +130,15 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
         /* Handle the Options Dictionary */
         
         if (SBBUtils.isValidOpt(p_options, "FORCE_TEST_DEVICE", Boolean.class)) {
-            isTestDevice = p_options.get("FORCE_TEST_DEVICE");
+            isTestDevice = (Boolean) p_options.get("FORCE_TEST_DEVICE");
         }
 
         if (SBBUtils.isValidOpt(p_options, "USE_TEST_ADS", Boolean.class)) {
-            useTestAds = p_options.get("USE_TEST_ADS");
+            useTestAds = (Boolean) p_options.get("USE_TEST_ADS");
         }
 
         if (SBBUtils.isValidOpt(p_options, "NON_PERSONALIZED_ADS", Boolean.class)) {
-            useNonPersonalizedAds = p_options.get("NON_PERSONALIZED_ADS");
+            useNonPersonalizedAds = (Boolean) p_options.get("NON_PERSONALIZED_ADS");
         }
 
         if (SBBUtils.isValidOpt(p_options, "TAG_FOR_CHILD_DIRECTED_TREATMENT", Integer.class)) {

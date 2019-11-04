@@ -60,7 +60,7 @@ public class SBBConsent extends Godot.SingletonBase {
         /* Handle the Options Dictionary */
         
         if (SBBUtils.isValidOpt(p_options, "FORCE_TEST_DEVICE", Boolean.class)) {
-            isTestDevice = p_options.get("FORCE_TEST_DEVICE");
+            isTestDevice = (Boolean) p_options.get("FORCE_TEST_DEVICE");
         }
 
     }
@@ -138,7 +138,7 @@ public class SBBConsent extends Godot.SingletonBase {
         }
 
         // Build the consent form with provided options
-        ConsentForm form = new ConsentForm.Builder(context, privacyUrl)
+        ConsentForm.Builder formBuilder = new ConsentForm.Builder(context, privacyUrl)
             .withListener(new ConsentFormListener() {
                 
                 @Override
@@ -170,24 +170,28 @@ public class SBBConsent extends Godot.SingletonBase {
 
 
         if (SBBUtils.isValidOpt(p_options, "PERSONALIZED_ADS", Boolean.class)) {
-            if (p_options.get("PERSONALIZED_ADS")) {
-                form.withPersonalizedAdsOption();
+            if ((Boolean) p_options.get("PERSONALIZED_ADS")) {
+                formBuilder.withPersonalizedAdsOption();
             }
         }
 
         if (SBBUtils.isValidOpt(p_options, "NON_PERSONALIZED_ADS", Boolean.class)) {
-            if (p_options.get("NON_PERSONALIZED_ADS")) {
-                form.withNonPersonalizedAdsOption();
+            if ((Boolean) p_options.get("NON_PERSONALIZED_ADS")) {
+                formBuilder.withNonPersonalizedAdsOption();
             }
         }
 
         if (SBBUtils.isValidOpt(p_options, "AD_FREE", Boolean.class)) {
-            if (p_options.get("AD_FREE")) {
-                form.withAdFreeOption();
+            if ((Boolean) p_options.get("AD_FREE")) {
+                formBuilder.withAdFreeOption();
             }
         }
 
-        // TO-DO
+        ConsentForm form = formBuilder.build();
+
+        // load the form
+
+        // show the form
     }
 
 
