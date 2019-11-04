@@ -32,10 +32,10 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
     private int instanceId;
 
     // flags
-    private Boolean isTestDevice = false;
-    private Boolean isMobileAdsInit = false;
-    private Boolean useTestAds = false;
-    private Boolean useNonPersonalizedAds = false;
+    private boolean isTestDevice = false;
+    private boolean isMobileAdsInit = false;
+    private boolean useTestAds = false;
+    private boolean useNonPersonalizedAds = false;
 
     // instances
     private RewardedAd rewardedAd;
@@ -82,9 +82,13 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
         instanceId = p_instanceId;
         SBBUtils.init(instanceId, "SBBPlayServicesAds");
 
-        // Auto set isTestDevice if debug build detected
+        // debug
         if (BuildConfig.DEBUG) {
             isTestDevice = true;
+
+            // log function parameters
+            SBBUtils.logVar("p_instanceId", p_instanceId);
+            SBBUtils.logDict("p_options", p_options);
         }
 
         /**
@@ -106,12 +110,15 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
                      * I will use isMobileAdsInit flag to avoid that.
                      */
 
-                    // log the status map
-                    for (Map.Entry<String, AdapterStatus> status : initializationStatus
-                                                                    .getAdapterStatusMap().entrySet()) {
-                        SBBUtils.log("InitializationStatus: " + status.getKey() + " : "
-                            + status.getValue().getInitializationState()
-                            + " (" + status.getValue().getDescription() + ")");
+                    // debug
+                    if (BuildConfig.DEBUG) {
+                        // log the status map
+                        for (Map.Entry<String, AdapterStatus> status : initializationStatus
+                                                                        .getAdapterStatusMap().entrySet()) {
+                            SBBUtils.log("InitializationStatus: " + status.getKey() + " : "
+                                + status.getValue().getInitializationState()
+                                + " (" + status.getValue().getDescription() + ")");
+                        }
                     }
                     
                     if (!isMobileAdsInit) {
@@ -132,15 +139,15 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
         /* Handle the Options Dictionary */
         
         if (SBBUtils.isValidOpt(p_options, "FORCE_TEST_DEVICE", Boolean.class)) {
-            isTestDevice = (Boolean) p_options.get("FORCE_TEST_DEVICE");
+            isTestDevice = (boolean) p_options.get("FORCE_TEST_DEVICE");
         }
 
         if (SBBUtils.isValidOpt(p_options, "USE_TEST_ADS", Boolean.class)) {
-            useTestAds = (Boolean) p_options.get("USE_TEST_ADS");
+            useTestAds = (boolean) p_options.get("USE_TEST_ADS");
         }
 
         if (SBBUtils.isValidOpt(p_options, "NON_PERSONALIZED_ADS", Boolean.class)) {
-            useNonPersonalizedAds = (Boolean) p_options.get("NON_PERSONALIZED_ADS");
+            useNonPersonalizedAds = (boolean) p_options.get("NON_PERSONALIZED_ADS");
         }
 
         if (SBBUtils.isValidOpt(p_options, "TAG_FOR_CHILD_DIRECTED_TREATMENT", Integer.class)) {
@@ -154,7 +161,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
             if (SBBUtils.anyMatch(allowedValues, p_options.get("TAG_FOR_CHILD_DIRECTED_TREATMENT"))) {
                 // get and update actual configuration
                 RequestConfiguration requestConfiguration = MobileAds.getRequestConfiguration().toBuilder()
-                    .setTagForChildDirectedTreatment((Integer) p_options.get("TAG_FOR_CHILD_DIRECTED_TREATMENT"))
+                    .setTagForChildDirectedTreatment((int) p_options.get("TAG_FOR_CHILD_DIRECTED_TREATMENT"))
                     .build();
                 // set configuration
                 MobileAds.setRequestConfiguration(requestConfiguration);
@@ -175,7 +182,7 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
             if (SBBUtils.anyMatch(allowedValues, p_options.get("TAG_FOR_UNDER_AGE_OF_CONSENT"))) {
                 // get and update actual configuration
                 RequestConfiguration requestConfiguration = MobileAds.getRequestConfiguration().toBuilder()
-                    .setTagForUnderAgeOfConsent((Integer) p_options.get("TAG_FOR_UNDER_AGE_OF_CONSENT"))
+                    .setTagForUnderAgeOfConsent((int) p_options.get("TAG_FOR_UNDER_AGE_OF_CONSENT"))
                     .build();
                 // set configuration
                 MobileAds.setRequestConfiguration(requestConfiguration);
@@ -218,6 +225,12 @@ public class SBBPlayServicesAds extends Godot.SingletonBase {
      */
     public void loadRewardedAd(String p_adUnitId) {
         
+        // debug
+        if (BuildConfig.DEBUG) {
+            // log function parameters
+            SBBUtils.logVar("p_adUnitId", p_adUnitId);
+        }
+
         final String adUnitId;
 
         if (useTestAds) {

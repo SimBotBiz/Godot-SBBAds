@@ -28,6 +28,7 @@ public class SBBConsent extends Godot.SingletonBase {
 
     // instances
     private ConsentInformation consentInformation;
+    private ConsentForm consentForm;
 
     // flags
     private boolean isTestDevice = false;
@@ -44,7 +45,7 @@ public class SBBConsent extends Godot.SingletonBase {
      *          default behavior (test device true if a debug build or runs on AVD).
      *          https://developers.google.com/admob/android/eu-consent#testing
      *       
-     *      - DEBUG_GEOGRAPHY (Integer) [0 = DISABLED, 1 = EEA, 2 = NOT_EEA]
+     *      - DEBUG_GEOGRAPHY (String) ['DEBUG_GEOGRAPHY_DISABLED', 'DEBUG_GEOGRAPHY_EEA', 'DEBUG_GEOGRAPHY_NOT_EEA']
      *          https://developers.google.com/admob/android/eu-consent#testing
      * 
      *      - TAG_FOR_UNDER_AGE_OF_CONSENT (Boolean) [true, false]
@@ -60,13 +61,17 @@ public class SBBConsent extends Godot.SingletonBase {
         instanceId = p_instanceId;
         SBBUtils.init(instanceId, "SBBConsent");
 
-        // Auto set isTestDevice if debug build detected
+        // debug
         if (BuildConfig.DEBUG) {
             isTestDevice = true;
+
+            // debug options
+            SBBUtils.logVar("p_instanceId", p_instanceId);
+            SBBUtils.logDict("p_options", p_options);
         }
 
         // Get consent information instance
-        consentInformation = ConsentInformation.getInstance(context);
+        consentInformation = ConsentInformation.getInstance(activity);
 
 
         /* Handle the Options Dictionary */
@@ -75,9 +80,9 @@ public class SBBConsent extends Godot.SingletonBase {
             isTestDevice = (boolean) p_options.get("FORCE_TEST_DEVICE");
         }
 
-        if (SBBUtils.isValidOpt(p_options, "DEBUG_GEOGRAPHY", Integer.class)) {
-            if (SBBUtils.anyMatch(DebugGeography.values(), p_options.get("DEBUG_GEOGRAPHY"))) {
-               debugGeography = DebugGeography.values()[(int) p_options.get("DEBUG_GEOGRAPHY")];
+        if (SBBUtils.isValidOpt(p_options, "DEBUG_GEOGRAPHY", String.class)) {
+            if (SBBUtils.anyMatch(DebugGeography.values(), DebugGeography.valueOf((String) p_options.get("DEBUG_GEOGRAPHY")))) {
+               debugGeography = DebugGeography.valueOf((String) p_options.get("DEBUG_GEOGRAPHY"));
             } else {
                 SBBUtils.log("DEBUG_GEOGRAPHY, value not allowed!");
             }
@@ -159,9 +164,21 @@ public class SBBConsent extends Godot.SingletonBase {
     /**
      * 
      * @param p_privacyUrl
-     * @param p_options
+     * @param p_options a dictionary of options, available values are:
+     * 
+     *      - PERSONALIZED_ADS (Boolean) [true, false]
+     *      - NON_PERSONALIZED_ADS (Boolean) [true, false]
+     *      - AD_FREE (Boolean) [true, false]
+     *      https://developers.google.com/admob/android/eu-consent#google_rendered_consent_form
      */
     public void collectConsent(String p_privacyUrl, Dictionary p_options) {
+
+        // debug
+        if (BuildConfig.DEBUG) {
+            // log function parameters
+            SBBUtils.logVar("p_privacyUrl", p_privacyUrl);
+            SBBUtils.logDict("p_options", p_options);
+        }
 
         URL privacyUrl = null;
 
@@ -172,13 +189,16 @@ public class SBBConsent extends Godot.SingletonBase {
         }
 
         // Build the consent form with provided options
-        ConsentForm.Builder formBuilder = new ConsentForm.Builder(context, privacyUrl)
+        ConsentForm.Builder formBuilder = new ConsentForm.Builder(activity, privacyUrl)
             .withListener(new ConsentFormListener() {
                 
                 @Override
                 public void onConsentFormLoaded() {
                     SBBUtils.log("onConsentFormLoaded");
                     GodotLib.calldeferred(instanceId, "_on_consent_form_loaded", new Object[] {});
+
+                    // show consent form
+                    consentForm.show();
                 }
 
                 @Override
@@ -221,13 +241,15 @@ public class SBBConsent extends Godot.SingletonBase {
             }
         }
 
-        ConsentForm form = formBuilder.build();
+        activity.runOnUiThread(new Runnable() {    
+            @Override public void run() {
+                // build the form
+                consentForm = formBuilder.build();
 
-        // load the form
-        form.load();
-
-        // show the form
-        form.show();
+                // load the form
+                consentForm.load();
+            }
+        });
     }
 
 

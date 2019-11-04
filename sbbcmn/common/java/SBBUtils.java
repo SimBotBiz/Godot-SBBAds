@@ -1,5 +1,6 @@
 package org.godotengine.godot;
 
+import java.util.Map;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -17,7 +18,7 @@ public class SBBUtils {
     private static int instanceId;
     private static String tag;
 
-    
+
     /**
      * Initialize Utils
      * 
@@ -78,17 +79,17 @@ public class SBBUtils {
     /**
      * Validate dictionary option
      * 
-     * @param p_dic
+     * @param p_dict
      * @param p_opt
      * @param type
      * @return true if option exists and type is correct
      */
-    public static boolean isValidOpt(Dictionary p_dic, String p_opt, Class type) {
-        if (p_dic.containsKey(p_opt)) {
-            if (type.isInstance(p_dic.get(p_opt))) {
+    public static boolean isValidOpt(Dictionary p_dict, String p_opt, Class type) {
+        if (p_dict.containsKey(p_opt)) {
+            if (type.isInstance(p_dict.get(p_opt))) {
                 return true;
             } else {
-                SBBUtils.log(p_opt + ", value type not valid! [" + p_dic.get(p_opt).getClass().getName() + "]");
+                log(p_opt + ", value type not valid! [" + p_dict.get(p_opt).getClass().getName() + "]");
             }
         }
 
@@ -97,12 +98,40 @@ public class SBBUtils {
 
 
     /**
+     * Log Variable
+     * 
+     * @param p_name
+     * @param p_msg
+     */
+    public static <T> void logVar(String p_name, T p_msg) {
+        log(p_name + " = " + String.valueOf(p_msg));
+    }
+
+
+    /**
+     * Log dictionary names and values
+     * 
+     * @param p_name
+     * @param p_dict
+     */
+    public static void logDict(String p_name, Dictionary p_dict) {
+        if (isJ8LFE()) {
+            p_dict.forEach((k,v) -> log("{" + p_name + "} = " + k + " : " + v + " (" + v.getClass().getName() + ")"));
+        } else {
+            for(Map.Entry<String, Object> entry : p_dict.entrySet())  {
+                log("{" + p_name + "} = " + entry.getKey() + " : " + entry.getValue() + " (" + entry.getValue().getClass().getName() + ")");
+            }
+        }
+    }
+
+
+    /**
      * Log back to Godot
      * 
-     * @param p_message
+     * @param p_msg
      */
-    public static void log(String p_message) {
-        pushMessage("[" + tag + "] " + p_message);
+    public static <T> void log(T p_msg) {
+        pushMessage("[" + tag + "] " + String.valueOf(p_msg));
     }
 
 
@@ -111,10 +140,10 @@ public class SBBUtils {
      * messages are received by the _get_message()
      * callback function of the caller script
      * 
-     * @param p_message
+     * @param p_msg
      */
-    public static void pushMessage(String p_message) {
-        GodotLib.calldeferred(instanceId, "_get_message", new Object[] { p_message });
+    public static void pushMessage(String p_msg) {
+        GodotLib.calldeferred(instanceId, "_get_message", new Object[] { p_msg });
     }
 
 

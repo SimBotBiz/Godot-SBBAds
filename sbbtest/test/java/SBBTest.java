@@ -1,7 +1,5 @@
 package org.godotengine.godot;
 
-import java.util.Map;
-
 import com.godot.game.BuildConfig;
 
 import org.godotengine.godot.Godot;
@@ -45,18 +43,9 @@ public class SBBTest extends Godot.SingletonBase {
         SBBUtils.log("Java 8 Language Features: " + SBBUtils.isJ8LFE());
 
         // Options Info
-        if (SBBUtils.isJ8LFE()) {
-            p_options.forEach((k,v) -> SBBUtils.log(
-                k + " : " + v + " (" + v.getClass().getName() + ")"
-            ));
-        } else {
-            for(Map.Entry<String, Object> entry : p_options.entrySet())  {
-                SBBUtils.log(
-                    entry.getKey() + " : " + entry.getValue() + " (" + entry.getValue().getClass().getName() + ")"
-                );
-            }
-        }
+        SBBUtils.logDict("Options", p_options);
     }
+
 
     /* Godot Singleton Module Init */
     static public Godot.SingletonBase initialize(Activity p_activity) {
@@ -71,6 +60,7 @@ public class SBBTest extends Godot.SingletonBase {
         
         activity = p_activity;
     }
+
 
     /* Activity States */
     protected void onMainPause() {
