@@ -1,5 +1,8 @@
 package org.godotengine.godot;
 
+import java.net.URL;
+import java.net.MalformedURLException;
+
 import com.godot.game.BuildConfig;
 
 import org.godotengine.godot.Godot;
@@ -12,12 +15,18 @@ import android.content.Context;
 import com.google.ads.consent.ConsentStatus;
 import com.google.ads.consent.ConsentInformation;
 import com.google.ads.consent.ConsentInfoUpdateListener;
+import com.google.ads.consent.ConsentForm;
+import com.google.ads.consent.ConsentFormListener;
+
 
 public class SBBConsent extends Godot.SingletonBase {
 
     protected Activity activity;
     protected Context context;
     private int instanceId;
+
+    // instances
+    private ConsentInformation consentInformation;
 
     // flags
     private Boolean isTestDevice = false;
@@ -37,24 +46,23 @@ public class SBBConsent extends Godot.SingletonBase {
         
         // Set godot instance id
         instanceId = p_instanceId;
-        
+        SBBUtils.init(instanceId, "SBBConsent");
+
         // Auto set isTestDevice if debug build detected
         if (BuildConfig.DEBUG) {
             isTestDevice = true;
         }
 
+        // Get consent information instance
+        consentInformation = ConsentInformation.getInstance(context);
+
+
         /* Handle the Options Dictionary */
         
-        if (p_options.containsKey("FORCE_TEST_DEVICE")) {
-
-            if (p_options.get("FORCE_TEST_DEVICE") instanceof Boolean) {
-                isTestDevice = (Boolean) p_options.get("FORCE_TEST_DEVICE");
-            } else {
-                SBBUtils.log(instanceId, "SBBConsent",
-                    "FORCE_TEST_DEVICE, value type not valid! [" + p_options.get("FORCE_TEST_DEVICE").getClass().getName() + "]");
-            }
-            
+        if (SBBUtils.isValidOpt(p_options, "FORCE_TEST_DEVICE", Boolean.class)) {
+            isTestDevice = p_options.get("FORCE_TEST_DEVICE");
         }
+
     }
 
 
@@ -62,28 +70,124 @@ public class SBBConsent extends Godot.SingletonBase {
      * Request Consent Info Update
      * 
      * @param p_publisherIds https://support.google.com/admob/answer/2784578
+     * 
+     * If the consent information is successfully updated, the updated consent 
+     * status and the request location are provided via the
+     * _on_consent_info_updated(String consentStatus, Boolean isRequestLocationInEeaOrUnknown) callback.
+     * 
+     * The returned consentStatus may have the values listed below:
+     *  - PERSONALIZED      (The user has granted consent for personalized ads.)
+     *  - NON_PERSONALIZED  (The user has granted consent for non-personalized ads.)
+     *  - UNKNOWN           (The user has neither granted nor declined consent for personalized or non-personalized ads.)
+     * 
+     * If isRequestLocationInEeaOrUnknown is false, the user is not located in the European Economic Area and consent
+     * is not required under the EU User Consent Policy. You can make ad requests to the Google Mobile Ads SDK.
+     * 
+     * If isRequestLocationInEeaOrUnknown is true:
+     *  - If the returned ConsentStatus is PERSONALIZED or NON_PERSONALIZED,
+     *    the user has already provided consent.
+     *    You can now forward consent to the Google Mobile Ads SDK.
+     * 
+     *  - If the returned ConsentStatus is UNKNOWN, use collectConsent() to collect
+     *    consent from the user.
+     * 
+     * https://developers.google.com/admob/android/eu-consent#update_consent_status
+     * 
      */
      public void requestConsentInfoUpdate(String[] p_publisherIds) {
-
-        ConsentInformation consentInformation = ConsentInformation.getInstance(context);
         
         consentInformation.requestConsentInfoUpdate(
             p_publisherIds, 
             new ConsentInfoUpdateListener() {
+
                 @Override
                 public void onConsentInfoUpdated(ConsentStatus consentStatus) {
-                    SBBUtils.log(instanceId, "SBBConsent", "onConsentInfoUpdated");
-                    GodotLib.calldeferred(instanceId, "_on_rewarded_ad_loaded", new Object[] {});
+
+                    // Get location
+                    Boolean isRequestLocationInEeaOrUnknown = consentInformation.isRequestLocationInEeaOrUnknown();
+
+                    SBBUtils.log(
+                        "onConsentInfoUpdated, consentStatus: " + consentStatus + ", isRequestLocationInEeaOrUnknown: " + isRequestLocationInEeaOrUnknown);
+                    GodotLib.calldeferred(instanceId, "_on_consent_info_updated",
+                        new Object[] { consentStatus.name(), isRequestLocationInEeaOrUnknown });
                 }
     
                 @Override
                 public void onFailedToUpdateConsentInfo(String errorDescription) {
-                    SBBUtils.log(instanceId, "SBBConsent", "onFailedToUpdateConsentInfo");
-                    GodotLib.calldeferred(instanceId, "_on_rewarded_ad_loaded", new Object[] {});
+                    SBBUtils.log("onFailedToUpdateConsentInfo, errorDescription: " + errorDescription);
+                    GodotLib.calldeferred(instanceId, "_on_failed_to_update_consent_info", new Object[] { errorDescription });
                 }
             }
         );
 
+    }
+
+    /**
+     * 
+     * @param p_privacyUrl
+     * @param p_options
+     */
+    public void collectConsent(String p_privacyUrl, Dictionary p_options) {
+
+        URL privacyUrl = null;
+
+        try {
+            privacyUrl = new URL(p_privacyUrl);
+        } catch (MalformedURLException e) {
+            SBBUtils.log("collectConsent, MalformedURLException: " + e.getMessage());
+        }
+
+        // Build the consent form with provided options
+        ConsentForm form = new ConsentForm.Builder(context, privacyUrl)
+            .withListener(new ConsentFormListener() {
+                
+                @Override
+                public void onConsentFormLoaded() {
+                    SBBUtils.log("onConsentFormLoaded");
+                    GodotLib.calldeferred(instanceId, "_on_consent_form_loaded", new Object[] {});
+                }
+
+                @Override
+                public void onConsentFormOpened() {
+                    SBBUtils.log("onConsentFormOpened");
+                    GodotLib.calldeferred(instanceId, "_on_consent_form_opened", new Object[] {});
+                }
+
+                @Override
+                public void onConsentFormClosed(ConsentStatus consentStatus, Boolean userPrefersAdFree) {
+                    SBBUtils.log(
+                        "onConsentFormClosed, consentStatus: " + consentStatus + ", userPrefersAdFree: " + userPrefersAdFree);
+                    GodotLib.calldeferred(instanceId, "_on_consent_form_closed",
+                        new Object[] { consentStatus.name(), userPrefersAdFree });
+                }
+
+                @Override
+                public void onConsentFormError(String errorDescription) {
+                    SBBUtils.log("onConsentFormError, errorDescription: " + errorDescription);
+                    GodotLib.calldeferred(instanceId, "_on_consent_form_error", new Object[] { errorDescription });
+                }
+            });
+
+
+        if (SBBUtils.isValidOpt(p_options, "PERSONALIZED_ADS", Boolean.class)) {
+            if (p_options.get("PERSONALIZED_ADS")) {
+                form.withPersonalizedAdsOption();
+            }
+        }
+
+        if (SBBUtils.isValidOpt(p_options, "NON_PERSONALIZED_ADS", Boolean.class)) {
+            if (p_options.get("NON_PERSONALIZED_ADS")) {
+                form.withNonPersonalizedAdsOption();
+            }
+        }
+
+        if (SBBUtils.isValidOpt(p_options, "AD_FREE", Boolean.class)) {
+            if (p_options.get("AD_FREE")) {
+                form.withAdFreeOption();
+            }
+        }
+
+        // TO-DO
     }
 
 
@@ -107,7 +211,8 @@ public class SBBConsent extends Godot.SingletonBase {
 
         registerClass("SBBConsent", new String[] {
             "init",
-            "requestConsentInfoUpdate"
+            "requestConsentInfoUpdate",
+            "collectConsent",
         });
         
         activity = p_activity;
@@ -117,15 +222,15 @@ public class SBBConsent extends Godot.SingletonBase {
 
     /* Activity States */
     protected void onMainPause() {
-        SBBUtils.log(instanceId, "SBBConsent", "onMainPause");
+        SBBUtils.log( "onMainPause");
     }
 
     protected void onMainResume() {
-        SBBUtils.log(instanceId, "SBBConsent", "onMainResume");
+        SBBUtils.log( "onMainResume");
     }
 
     protected void onMainDestroy() {
-        SBBUtils.log(instanceId, "SBBConsent", "onMainDestroy");
+        SBBUtils.log( "onMainDestroy");
     }
 
 }
