@@ -28,3 +28,4 @@ def configure(env):
             )
             env.android_add_java_dir("consent-library/java")
             env.android_add_to_manifest("play-services-ads/AndroidManifestChunk.xml")
+            env.android_add_asset_dir("consent-library/asset")
