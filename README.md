@@ -13,7 +13,7 @@ This module is compatible with Godot 3.1.1 (AndroidX Mod) and Android v19+
 
 ⚠ *This project is in alpha state, use at your own risk, you have been warned!* ⚠
 
-If you need something more complete and stable please check this awsome module from Kloder Games -> [https://github.com/kloder-games/godot-admob](https://github.com/kloder-games/godot-admob)
+If you need something more complete and stable please check this awesome module from Kloder Games -> [https://github.com/kloder-games/godot-admob](https://github.com/kloder-games/godot-admob)
 
 ## Key features over similar godot modules
 
