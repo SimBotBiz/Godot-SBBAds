@@ -5,7 +5,6 @@ var privacy_url: String = "https://gdpr.eu/privacy-notice/"
 
 var consent: Object = null
 var consent_opt: Dictionary = {
-	"FORCE_TEST_DEVICE": true,
 	"DEBUG_GEOGRAPHY": "DEBUG_GEOGRAPHY_EEA",
 	"TAG_FOR_UNDER_AGE_OF_CONSENT": false,
 }
