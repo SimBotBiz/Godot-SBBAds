@@ -33,7 +33,7 @@ If you need something more complete and stable please check this awesome module 
 
 To use this module you need to build your own custom template for Android.
 
-1. Get and setup the Godot Engine AndroidX Mod
+1. Get and setup the Godot Engine AndroidX Mod  
 [https://github.com/SimBotBiz/Godot-Engine-for-AndroidX](https://github.com/SimBotBiz/Godot-Engine-for-AndroidX)  
 
 2. Before going any further, I strongly advise to do a test build to be sure everything is working fine.
