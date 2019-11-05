@@ -13,7 +13,6 @@ font_data = ExtResource( 3 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
-AppTestScene = "res://AppTest.tscn"
 ConsentTestScene = "res://ConsentTest.tscn"
 AdsTestScene = "res://AdsTest.tscn"
 
@@ -30,35 +29,24 @@ Godot Test App"
 align = 1
 valign = 1
 
-[node name="AppTestBtn" type="Button" parent="."]
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -150.0
-margin_top = 465.0
-margin_right = 150.0
-margin_bottom = 615.0
-custom_fonts/font = SubResource( 1 )
-text = "App Test"
-
 [node name="ConsentTestBtn" type="Button" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -150.0
-margin_top = 634.0
+margin_top = 480.0
 margin_right = 150.0
-margin_bottom = 784.0
+margin_bottom = 630.0
 custom_fonts/font = SubResource( 1 )
-text = "Consent Test"
+text = "Consent"
 
 [node name="AdsTestBtn" type="Button" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -150.0
-margin_top = 809.0
+margin_top = 655.0
 margin_right = 150.0
-margin_bottom = 959.0
+margin_bottom = 805.0
 custom_fonts/font = SubResource( 1 )
 text = "Ads Test"
-[connection signal="pressed" from="AppTestBtn" to="." method="_on_AppTestBtn_pressed"]
 [connection signal="pressed" from="ConsentTestBtn" to="." method="_on_ConsentTestBtn_pressed"]
 [connection signal="pressed" from="AdsTestBtn" to="." method="_on_AdsTestBtn_pressed"]
