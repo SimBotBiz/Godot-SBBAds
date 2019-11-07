@@ -10,7 +10,6 @@ import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.Dictionary;
 
 import android.app.Activity;
-import android.content.Context;
 
 import com.google.ads.consent.DebugGeography;
 import com.google.ads.consent.ConsentStatus;
@@ -23,7 +22,6 @@ import com.google.ads.consent.ConsentFormListener;
 public class SBBConsent extends Godot.SingletonBase {
 
     protected Activity activity;
-    protected Context context;
     private int instanceId;
 
     // instances
@@ -278,7 +276,6 @@ public class SBBConsent extends Godot.SingletonBase {
         });
         
         activity = p_activity;
-        context = activity.getApplicationContext();
     }
 
 
