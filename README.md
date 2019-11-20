@@ -19,8 +19,8 @@ If you need something more complete and stable please check this awesome module 
 
 ## Key features over similar godot modules
 
-- Support for Play Services Ads (AdMob) v18.2.0  
-<https://developers.google.com/admob/android/rel-notes/#18.2.0>
+- Support for Play Services Ads (AdMob) v18.3.0  
+<https://developers.google.com/admob/android/rel-notes/#18.3.0>
 
 - Integration with Consent Library v1.0.7  
 <https://developers.google.com/admob/android/eu-consent>
@@ -42,18 +42,18 @@ To use this module you need to build your own custom template for Android.
 
 3. Clone or download this repo
 
-4. Copy *sbbads* and *sbbcmn* to the `modules\` folder of Godot Engine source
+4. Copy *sbb_ads* and *sbb_cmn* to the `modules\` folder of Godot Engine source
 
 5. If you want to use the **Firebase Analytics** service copy also *sbb_firebase*  
     and add your own *google-services.json* to `platform\android\java\`
 
 6. Check and edit configuration files:
 
-    - `modules\sbbads\config.py`  
+    - `modules\sbb_ads\config.py`  
     You can enable or disable functionalities in the *artifacts* dictionary.  
     If you are using the Firebase module you should pick the `firebase-ads` over the `play-services-ads`
 
-    - `modules\sbbads\play-services-ads\AndroidManifestChunk.xml`  
+    - `modules\sbb_ads\play-services-ads\AndroidManifestChunk.xml`  
     You need to put there your AdMob App ID -> [(more infos)](https://developers.google.com/admob/android/quick-start#update_your_androidmanifestxml)
 
     - `modules\sbb_firebase\config.py`  
@@ -95,7 +95,7 @@ In the meantime if you want to play with the example remember that you need to:
     var publisher_ids: Array = ["pub-0123456789012345"]
     ```
 
-    [https://support.google.com/admob/answer/2784578](https://support.google.com/admob/answer/2784578)
+    <https://support.google.com/admob/answer/2784578>
 
 ## Is my work useful for you?
 
