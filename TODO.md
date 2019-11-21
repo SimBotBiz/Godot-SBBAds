@@ -8,7 +8,7 @@
 ## API support
 
 - [ ] Mediation
-- [ ] Firebase
+- [x] Firebase
 
 ## OS support
 
