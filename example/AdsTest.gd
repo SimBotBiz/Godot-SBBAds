@@ -14,7 +14,7 @@ var rewarded_ad_ready: bool = false
 
 func _ready() -> void:
 
-	# Foward Consent
+	# Forward Consent
 	psa_opt["NON_PERSONALIZED_ADS"] = Globals.non_personalized_ads
 
 	# get and init SBBPlayServicesAds
@@ -23,7 +23,7 @@ func _ready() -> void:
 		psa.init(get_instance_id(), psa_opt)
 
 
-# print log ingame
+# print log in-game
 func print_app(p_text: String) -> void:
 	$Log.newline()
 	$Log.add_text(p_text)
@@ -105,8 +105,8 @@ func _on_rewarded_ad_closed() -> void:
 	rewarded_ad_set_state("loading")
 
 
-func _on_user_earned_reward(p_currency: String, p_ammount: int) -> void:
-	print("_on_user_earned_reward, currency: " + p_currency + ", ammount: " + str(p_ammount))
+func _on_user_earned_reward(p_currency: String, p_amount: int) -> void:
+	print("_on_user_earned_reward, currency: " + p_currency + ", amount: " + str(p_amount))
 
 
 func _on_rewarded_ad_failed_to_show(p_error_code: int) -> void:

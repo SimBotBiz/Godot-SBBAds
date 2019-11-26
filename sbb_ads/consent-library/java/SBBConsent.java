@@ -38,15 +38,15 @@ public class SBBConsent extends Godot.SingletonBase {
      * @param p_instanceId 
      * @param p_options a dictionary of options, available values are:
      * 
-     *      - FORCE_TEST_DEVICE (Boolean) [true, false]
+     *      - FORCE_TEST_DEVICE [Boolean] (true, false)
      *          Flag the device as a test device (or not), this will overwrite the
      *          default behavior (test device true if a debug build or runs on AVD).
      *          https://developers.google.com/admob/android/eu-consent#testing
      *       
-     *      - DEBUG_GEOGRAPHY (String) ['DEBUG_GEOGRAPHY_DISABLED', 'DEBUG_GEOGRAPHY_EEA', 'DEBUG_GEOGRAPHY_NOT_EEA']
+     *      - DEBUG_GEOGRAPHY [String] ('DEBUG_GEOGRAPHY_DISABLED', 'DEBUG_GEOGRAPHY_EEA', 'DEBUG_GEOGRAPHY_NOT_EEA')
      *          https://developers.google.com/admob/android/eu-consent#testing
      * 
-     *      - TAG_FOR_UNDER_AGE_OF_CONSENT (Boolean) [true, false]
+     *      - TAG_FOR_UNDER_AGE_OF_CONSENT [Boolean] (true, false)
      *          If a publisher is aware that the user is under the age of consent,
      *          all ad requests must set TFUA (Tag For Users under the Age of Consent in Europe).
      *          This setting takes effect for all future ad requests.
@@ -160,13 +160,14 @@ public class SBBConsent extends Godot.SingletonBase {
     }
 
     /**
-     * 
+     * Collect Consent
+     *
      * @param p_privacyUrl
      * @param p_options a dictionary of options, available values are:
      * 
-     *      - PERSONALIZED_ADS (Boolean) [true, false]
-     *      - NON_PERSONALIZED_ADS (Boolean) [true, false]
-     *      - AD_FREE (Boolean) [true, false]
+     *      - PERSONALIZED_ADS [Boolean] (true, false)
+     *      - NON_PERSONALIZED_ADS [Boolean] (true, false)
+     *      - AD_FREE [Boolean] (true, false)
      *      https://developers.google.com/admob/android/eu-consent#google_rendered_consent_form
      */
     public void collectConsent(String p_privacyUrl, Dictionary p_options) {

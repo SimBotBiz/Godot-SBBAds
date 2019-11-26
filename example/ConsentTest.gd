@@ -25,7 +25,7 @@ func _ready() -> void:
 		consent.requestConsentInfoUpdate(publisher_ids)
 
 
-# print log ingame
+# print log in-game
 func print_app(p_text: String) -> void:
 	$Log.newline()
 	$Log.add_text(p_text)
@@ -96,7 +96,7 @@ func _on_consent_form_closed(p_consent_status: String, p_user_prefer_adfree: boo
 	set_npa(p_consent_status)
 
 	# p_user_prefer_adfree
-	# did you offer an "ad free" (aka paid) verion of your app?
+	# did you offer an "ad free" (aka paid) version of your app?
 	# now is when you do the magic to get paid
 
 
